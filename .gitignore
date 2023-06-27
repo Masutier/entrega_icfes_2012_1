@@ -1,0 +1,7 @@
+venv
+venv/
+__pycache__
+
+codium/venv/
+codium/__pycache__
+
