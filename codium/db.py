@@ -10,7 +10,7 @@ def createDB():
 
 
 def createTable(creatableQuery):
-    conn=sql3.connect("./DMs/STAR_SB11_2012_1x.db")
+    conn=sql3.connect("./DMs/STAR_SB11_2012_1.db")
     cursor = conn.cursor()
 
     cursor.execute(creatableQuery)
@@ -20,7 +20,7 @@ def createTable(creatableQuery):
 
 
 def loadTableData(newFile):
-    conn=sql3.connect("./DMs/STAR_SB11_2012_1x.db")
+    conn=sql3.connect("./DMs/STAR_SB11_2012_1.db")
     dimen = pd.read_csv('./DMs/' + newFile + '.csv', low_memory=False)
 
     dimen.to_sql(newFile, conn, if_exists='append', index=False)
@@ -30,7 +30,7 @@ def loadTableData(newFile):
 
 
 def createFactsTable(creatableQuery):
-    conn=sql3.connect("./DMs/STAR_SB11_2012_1x.db")
+    conn=sql3.connect("./DMs/STAR_SB11_2012_1.db")
     cursor = conn.cursor()
 
     cursor.execute(creatableQuery)
