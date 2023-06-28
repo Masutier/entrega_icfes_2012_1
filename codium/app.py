@@ -174,8 +174,20 @@ def dmColBilin():
 
 def dmPuntIngles():
     data = pd.read_csv('./DMs/TH_SB11_2012_1.csv', low_memory=False)
-    data['DESEMP_INGLES'] = data.DESEMP_INGLES.fillna('A-')
+    data['DESEMP_INGLES'] = "1"
     data['PUNT_INGLES'] = data.PUNT_INGLES.replace(-1, 0, regex=False)
+    data.to_csv('./DMs/TH_SB11_2012_1.csv', index = False)
+
+
+def groupIngles():
+    data = pd.read_csv('./DMs/TH_SB11_2012_1.csv', low_memory=False)
+    data.loc[(data['PUNT_INGLES'] >= 0) & (data['PUNT_INGLES'] <= 15), 'DESEMP_INGLES'] = 'A-'
+    data.loc[(data['PUNT_INGLES'] >= 16) & (data['PUNT_INGLES'] <= 30), 'DESEMP_INGLES'] = 'A1'
+    data.loc[(data['PUNT_INGLES'] >= 31) & (data['PUNT_INGLES'] <= 45), 'DESEMP_INGLES'] = 'A2'
+    data.loc[(data['PUNT_INGLES'] >= 46) & (data['PUNT_INGLES'] <= 60), 'DESEMP_INGLES'] = 'B1'
+    data.loc[(data['PUNT_INGLES'] >= 61) & (data['PUNT_INGLES'] <= 75), 'DESEMP_INGLES'] = 'B2'
+    data.loc[(data['PUNT_INGLES'] >= 76) & (data['PUNT_INGLES'] <= 90), 'DESEMP_INGLES'] = 'C1'
+    data.loc[(data['PUNT_INGLES'] >= 91) & (data['PUNT_INGLES'] <= 100), 'DESEMP_INGLES'] = 'C2'
     data.to_csv('./DMs/TH_SB11_2012_1.csv', index = False)
 
 
@@ -190,8 +202,10 @@ def dmDeIngles():
     data['IDDESING'] = data.IDDESING.str.replace('A-', '1', regex=False)
     data['IDDESING'] = data.IDDESING.str.replace('A1', '2', regex=False)
     data['IDDESING'] = data.IDDESING.str.replace('A2', '3', regex=False)
-    data['IDDESING'] = data.IDDESING.str.replace('B+', '4', regex=False)
-    data['IDDESING'] = data.IDDESING.str.replace('B1', '5', regex=False)
+    data['IDDESING'] = data.IDDESING.str.replace('B1', '4', regex=False)
+    data['IDDESING'] = data.IDDESING.str.replace('B2', '5', regex=False)
+    data['IDDESING'] = data.IDDESING.str.replace('C1', '6', regex=False)
+    data['IDDESING'] = data.IDDESING.str.replace('C2', '7', regex=False)
     data.to_csv('./DMs/TH_SB11_2012_1.csv', index = False)
 
     creatableQuery = f"""CREATE TABLE IF NOT EXISTS DM_DESING (
@@ -484,12 +498,98 @@ def dmEstGen():
 
     return data
 
+def dmPuntMath():
+    data = pd.read_csv('./DMs/TH_SB11_2012_1.csv', low_memory=False)
+    data['DESEMP_MATH'] = 0
+    data.loc[data['PUNT_MATEMATICAS'] > 100, 'PUNT_MATEMATICAS'] = 100
+    data.to_csv('./DMs/TH_SB11_2012_1.csv', index = False)
+
+
+def groupMath():
+    data = pd.read_csv('./DMs/TH_SB11_2012_1.csv', low_memory=False)
+    data.loc[(data['PUNT_MATEMATICAS'] >= 0) & (data['PUNT_MATEMATICAS'] <= 15), 'DESEMP_MATH'] = 'A-'
+    data.loc[(data['PUNT_MATEMATICAS'] >= 16) & (data['PUNT_MATEMATICAS'] <= 30), 'DESEMP_MATH'] = 'A1'
+    data.loc[(data['PUNT_MATEMATICAS'] >= 31) & (data['PUNT_MATEMATICAS'] <= 45), 'DESEMP_MATH'] = 'A2'
+    data.loc[(data['PUNT_MATEMATICAS'] >= 46) & (data['PUNT_MATEMATICAS'] <= 60), 'DESEMP_MATH'] = 'B1'
+    data.loc[(data['PUNT_MATEMATICAS'] >= 61) & (data['PUNT_MATEMATICAS'] <= 75), 'DESEMP_MATH'] = 'B2'
+    data.loc[(data['PUNT_MATEMATICAS'] >= 76) & (data['PUNT_MATEMATICAS'] <= 90), 'DESEMP_MATH'] = 'C1'
+    data.loc[(data['PUNT_MATEMATICAS'] >= 91) & (data['PUNT_MATEMATICAS'] <= 100), 'DESEMP_MATH'] = 'C2'
+    data.to_csv('./DMs/TH_SB11_2012_1.csv', index = False)
+
+
+def dmDeMath():
+    data = pd.read_csv('./DMs/TH_SB11_2012_1.csv', low_memory=False)
+    DA = {'NOMBRE': data['DESEMP_MATH']}
+    newFile = "DM_DESMATH"
+    idCol = "IDDESMATH"
+    createDM(DA, newFile, idCol)
+
+    data.columns = data.columns.str.replace('DESEMP_MATH', 'IDDESMATH')
+    data['IDDESMATH'] = data.IDDESMATH.str.replace('A-', '1', regex=False)
+    data['IDDESMATH'] = data.IDDESMATH.str.replace('A1', '2', regex=False)
+    data['IDDESMATH'] = data.IDDESMATH.str.replace('A2', '3', regex=False)
+    data['IDDESMATH'] = data.IDDESMATH.str.replace('B1', '4', regex=False)
+    data['IDDESMATH'] = data.IDDESMATH.str.replace('B2', '5', regex=False)
+    data['IDDESMATH'] = data.IDDESMATH.str.replace('C1', '6', regex=False)
+    data['IDDESMATH'] = data.IDDESMATH.str.replace('C2', '7', regex=False)
+    data.to_csv('./DMs/TH_SB11_2012_1.csv', index = False)
+
+    creatableQuery = f"""CREATE TABLE IF NOT EXISTS DM_DESMATH (
+                    IDDESMATH INTEGER PRIMARY KEY,
+                    NOMBRE TEXT
+                );"""
+    createTable(creatableQuery)
+    loadTableData(newFile)
+
+
+def groupPuesto():
+    data = pd.read_csv('./DMs/TH_SB11_2012_1.csv', low_memory=False)
+    data['DESEMP_PUESTO'] = 0
+    data.loc[(data['ESTU_PUESTO'] >= 0) & (data['ESTU_PUESTO'] <= 150), 'DESEMP_PUESTO'] = 'A-'
+    data.loc[(data['ESTU_PUESTO'] >= 151) & (data['ESTU_PUESTO'] <= 300), 'DESEMP_PUESTO'] = 'A1'
+    data.loc[(data['ESTU_PUESTO'] >= 301) & (data['ESTU_PUESTO'] <= 450), 'DESEMP_PUESTO'] = 'A2'
+    data.loc[(data['ESTU_PUESTO'] >= 451) & (data['ESTU_PUESTO'] <= 600), 'DESEMP_PUESTO'] = 'B1'
+    data.loc[(data['ESTU_PUESTO'] >= 601) & (data['ESTU_PUESTO'] <= 750), 'DESEMP_PUESTO'] = 'B2'
+    data.loc[(data['ESTU_PUESTO'] >= 751) & (data['ESTU_PUESTO'] <= 900), 'DESEMP_PUESTO'] = 'C1'
+    data.loc[(data['ESTU_PUESTO'] >= 901) & (data['ESTU_PUESTO'] <= 1000), 'DESEMP_PUESTO'] = 'C2'
+    data.to_csv('./DMs/TH_SB11_2012_1.csv', index = False)
+
+
+def dmDePuesto():
+    data = pd.read_csv('./DMs/TH_SB11_2012_1.csv', low_memory=False)
+    DA = {'NOMBRE': data['DESEMP_PUESTO']}
+    newFile = "DM_PUESTO"
+    idCol = "IDPUESTO"
+    createDM(DA, newFile, idCol)
+
+    data.columns = data.columns.str.replace('DESEMP_PUESTO', 'IDPUESTO')
+    data['IDPUESTO'] = data.IDPUESTO.str.replace('A-', '1', regex=False)
+    data['IDPUESTO'] = data.IDPUESTO.str.replace('A1', '2', regex=False)
+    data['IDPUESTO'] = data.IDPUESTO.str.replace('A2', '3', regex=False)
+    data['IDPUESTO'] = data.IDPUESTO.str.replace('B1', '4', regex=False)
+    data['IDPUESTO'] = data.IDPUESTO.str.replace('B2', '5', regex=False)
+    data['IDPUESTO'] = data.IDPUESTO.str.replace('C1', '6', regex=False)
+    data['IDPUESTO'] = data.IDPUESTO.str.replace('C2', '7', regex=False)
+    data.to_csv('./DMs/TH_SB11_2012_1.csv', index = False)
+
+    creatableQuery = f"""CREATE TABLE IF NOT EXISTS DM_PUESTO (
+                    IDPUESTO INTEGER PRIMARY KEY,
+                    NOMBRE TEXT
+                );"""
+    createTable(creatableQuery)
+    loadTableData(newFile)
+
 
 def cleanColumns():
     data = pd.read_csv('./DMs/TH_SB11_2012_1.csv', low_memory=False)
     
     data = data.drop('ESTU_EDAD', axis=1)
     data = data.drop('FECHA_ANO', axis=1)
+    data = data.drop('PUNT_INGLES', axis=1)
+    data = data.drop('PUNT_MATEMATICAS', axis=1)
+    data = data.drop('ESTU_PUESTO', axis=1)
+
+    data.to_csv('./DMs/TH_SB11_2012_1.csv', index = False)
 
     return data
 
@@ -545,6 +645,7 @@ def saveThDb():
 
 # dmColBilin()
 # dmPuntIngles()
+# groupIngles()
 # dmDeIngles()
 # paisRess()
 # coleCalen()
@@ -556,6 +657,12 @@ def saveThDb():
 # mcpioDepto()
 # coleGenero()
 # dmEstGen()
+
+# dmPuntMath()
+# groupMath()
+# dmDeMath()
+# groupPuesto()
+# dmDePuesto()
 
 # cleanColumns()
 
