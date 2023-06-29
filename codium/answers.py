@@ -11,8 +11,8 @@ from dateutil import relativedelta
 from mmm import foundMedia, foundMediana, foundModa  # Need data and column name
 
 
-conn=sql3.connect("./DMs/STAR_SB11_2012_1.db")
-cursor = conn.cursor()
+# conn=sql3.connect("./DMs/STAR_SB11_2012_1.db")
+# cursor = conn.cursor()
 
 
 """
@@ -27,25 +27,38 @@ Se desea comprobar lo siguiente:
 """
 
 # Leer db y ordenar data
-def callFromDb():
-
+def bestMath():
     data = pd.read_csv('./DMs/TH_SB11_2012_1.csv', low_memory=False)
 
-    girls = data['IDESTGEN'] == 1
-    print(girls)
+    girls = data[(data["IDESTGEN"] == 1) & (data["IDDESMATH"] == 7)]
+    count = len(girls.index)
+
+    guys = data[(data["IDESTGEN"] == 2) & (data["IDDESMATH"] == 7)]
+    count1 = len(guys.index)
+
+    if count > count1:
+        print(count, "mujeres sobresalieron en el area de Matematicas, a diferencia de ", count1, "hombres")
+    else:
+        print(count1, "hombres sobresalieron en el area de Matematicas, a diferencia de ", count, "mujeres")
 
 
-    # sqlQuery = f"""SELECT IDESTGEN FROM TH_SB11_2012_1"""
+def bestMathCity():
+    data = pd.read_csv('./DMs/TH_SB11_2012_1.csv', low_memory=False)
+
+    girls = data[(data["IDESTGEN"] == 1) & (data["IDDESMATH"] == 7) & (data["IDCODEMUNI"])]
+    count = len(girls.index)
+
+    guys = data[(data["IDESTGEN"] == 2) & (data["IDDESMATH"] == 7) & (data["IDCODEMUNI"])]
+    count1 = len(guys.index)
+
+    if count > count1:
+        print(count, "mujeres sobresalieron en el area de Matematicas, a diferencia de ", count1, "hombres")
+    else:
+        print(count1, "hombres sobresalieron en el area de Matematicas, a diferencia de ", count, "mujeres")
 
 
-    # cursor.execute(sqlQuery)
-    # datos = cursor.fetchall()
-    # conn.commit()
-    # conn.close()
-
-    # print(count(datos))
-    # for dato in datos:
-    #     print(dato)
 
 
-callFromDb()
+
+bestMath()
+bestMathCity()
