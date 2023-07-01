@@ -123,7 +123,28 @@ def besting():
 
 
 
+def bestingPais():
+    DM_EPAIS = pd.read_csv('./DMs/DM_EPAIS.csv', low_memory=False)
+    paisname = DM_EPAIS["IDEPAIS"]
+
+    pais = data_sub2["IDEPAIS"] # lista de los mas destacados en ingles
+    count = len(pais.index)
+    pais1 = pais.drop_duplicates()
+    
+
+    print("La nacionalidad de los estudiantes mas destacados en las pruevas de Ingles fueron", count, "originarios de:")
+    for pa in pais1:
+        if pa in paisname:
+            print(DM_EPAIS["NOMBRE"][pa -1])
+
+
+
 bestMath()
+print("*" * 100)
 bestMathCity()
+print("*" * 100)
 entidades()
+print("*" * 100)
 besting()
+print("*" * 100)
+bestingPais()
