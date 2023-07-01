@@ -162,8 +162,8 @@ def dmColBilin():
 
 def dmPuntRangos():
     DM_RANGOS = {'IDRANGOS': ["1", "2", "3", "4", "5", "6", "7"],
-                    'NOMBRE': ['A-', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2',],
-                    'RANGO': ["0 ~ 15", "16 ~ 30", "31 ~ 45", "46 ~ 60", "61 ~ 75", "76 ~ 90", "91 ~ 100"]}
+                    'NOMBRE': ['A-', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'],
+                    'RANGO': ["0 ~ 16", "17 ~ 33", "34 ~ 50", "51 ~ 67", "68 ~ 84", "85 ~ 99", "100"]}
     rangos = pd.DataFrame(DM_RANGOS)
     rangos.to_csv('./DMs/DM_RANGOS.csv', index = False)
 
@@ -177,13 +177,13 @@ def dmDeIngles():
     data['DESEMP_INGLES'] = "1"
     data['PUNT_INGLES'] = data.PUNT_INGLES.replace(-1, 0, regex=False)
     data.columns = data.columns.str.replace('DESEMP_INGLES', 'IDDESING')
-    data.loc[(data['PUNT_INGLES'] >= 0) & (data['PUNT_INGLES'] <= 15), 'IDDESING'] = '1'
-    data.loc[(data['PUNT_INGLES'] >= 16) & (data['PUNT_INGLES'] <= 30), 'IDDESING'] = '2'
-    data.loc[(data['PUNT_INGLES'] >= 31) & (data['PUNT_INGLES'] <= 45), 'IDDESING'] = '3'
-    data.loc[(data['PUNT_INGLES'] >= 46) & (data['PUNT_INGLES'] <= 60), 'IDDESING'] = '4'
-    data.loc[(data['PUNT_INGLES'] >= 61) & (data['PUNT_INGLES'] <= 75), 'IDDESING'] = '5'
-    data.loc[(data['PUNT_INGLES'] >= 76) & (data['PUNT_INGLES'] <= 90), 'IDDESING'] = '6'
-    data.loc[(data['PUNT_INGLES'] >= 91) & (data['PUNT_INGLES'] <= 100), 'IDDESING'] = '7'
+    data.loc[(data['PUNT_INGLES'] >= 0) & (data['PUNT_INGLES'] <= 16), 'IDDESING'] = '1'
+    data.loc[(data['PUNT_INGLES'] >= 17) & (data['PUNT_INGLES'] <= 33), 'IDDESING'] = '2'
+    data.loc[(data['PUNT_INGLES'] >= 34) & (data['PUNT_INGLES'] <= 50), 'IDDESING'] = '3'
+    data.loc[(data['PUNT_INGLES'] >= 51) & (data['PUNT_INGLES'] <= 67), 'IDDESING'] = '4'
+    data.loc[(data['PUNT_INGLES'] >= 68) & (data['PUNT_INGLES'] <= 84), 'IDDESING'] = '5'
+    data.loc[(data['PUNT_INGLES'] >= 85) & (data['PUNT_INGLES'] <= 99), 'IDDESING'] = '6'
+    data.loc[data['PUNT_INGLES'] == 100, 'IDDESING'] = '7'
     data.to_csv('./DMs/TH_SB11_2012_1.csv', index = False)
     creatableQuery = f"""CREATE TABLE IF NOT EXISTS DM_DESING (
                     IDDESING INTEGER PRIMARY KEY,
@@ -225,12 +225,11 @@ def coleCalen():
     idCol = "IDCOLCALEN"
     createDM(DA, newFile, idCol)
     data.columns = data.columns.str.replace('COLE_CALENDARIO', 'IDCOLCALEN')
-    data['IDCOLCALEN'] = data.IDCOLCALEN.fillna('4')
+    data['IDCOLCALEN'] = data.IDCOLCALEN.fillna('3')
     data['IDCOLCALEN'] = data.IDCOLCALEN.replace("A", '1', regex=False)
     data['IDCOLCALEN'] = data.IDCOLCALEN.replace("B", '2', regex=False)
     data['IDCOLCALEN'] = data.IDCOLCALEN.replace("F", '3', regex=False)
     data.to_csv('./DMs/TH_SB11_2012_1.csv', index = False)
-
     creatableQuery = f"""CREATE TABLE IF NOT EXISTS DM_COLCALEN (
                     IDCOLCALEN INTEGER PRIMARY KEY,
                     NOMBRE TEXT
@@ -404,11 +403,11 @@ def dmFecha():
 def mcpioDepto():
     # ESTU_RESIDE_DEPTO    ESTU_COD_RESIDE_MCPIO    ESTU_RESIDE_DEPTO
     data = pd.read_csv('./DMs/TH_SB11_2012_1.csv', low_memory=False)
-    data['ESTU_RESIDE_DEPTO'] = data['ESTU_COD_RESIDE_MCPIO'] // 1000
-    data['ESTU_COD_RESIDE_MCPIO'] = data['ESTU_COD_RESIDE_MCPIO'].fillna('NA')
-    data['ESTU_RESIDE_DEPTO'] = data['ESTU_RESIDE_DEPTO'].fillna('NA')
-    data.columns = data.columns.str.replace('ESTU_COD_RESIDE_MCPIO', 'IDCODEMUNI')
-    data.columns = data.columns.str.replace('ESTU_RESIDE_DEPTO', 'IDCODEDEPTO')
+    data['ESTU_RESIDE_DEPTO'] = data.ESTU_COD_RESIDE_MCPIO // 1000
+    data['ESTU_COD_RESIDE_MCPIO'] = data.ESTU_COD_RESIDE_MCPIO.fillna('NOID')
+    data['ESTU_RESIDE_DEPTO'] = data.ESTU_RESIDE_DEPTO.fillna('NOID')
+    data.columns = data.columns.str.replace('ESTU_COD_RESIDE_MCPIO', 'IDCODEMUNI', regex=False)
+    data.columns = data.columns.str.replace('ESTU_RESIDE_DEPTO', 'IDCODEDEPTO', regex=False)
     data.drop(['ESTU_RESIDE_MCPIO'], axis=1, inplace=True)
     data.to_csv('./DMs/TH_SB11_2012_1.csv', index = False)
 
@@ -460,13 +459,13 @@ def dmDeMath():
     data['DESEMP_MATH'] = 0
     data.loc[data['PUNT_MATEMATICAS'] > 100, 'PUNT_MATEMATICAS'] = 100
     data.columns = data.columns.str.replace('DESEMP_MATH', 'IDDESMATH')
-    data.loc[(data['PUNT_MATEMATICAS'] >= 0) & (data['PUNT_MATEMATICAS'] <= 15), 'IDDESMATH'] = '1'
-    data.loc[(data['PUNT_MATEMATICAS'] >= 16) & (data['PUNT_MATEMATICAS'] <= 30), 'IDDESMATH'] = '2'
-    data.loc[(data['PUNT_MATEMATICAS'] >= 31) & (data['PUNT_MATEMATICAS'] <= 45), 'IDDESMATH'] = '3'
-    data.loc[(data['PUNT_MATEMATICAS'] >= 46) & (data['PUNT_MATEMATICAS'] <= 60), 'IDDESMATH'] = '4'
-    data.loc[(data['PUNT_MATEMATICAS'] >= 61) & (data['PUNT_MATEMATICAS'] <= 75), 'IDDESMATH'] = '5'
-    data.loc[(data['PUNT_MATEMATICAS'] >= 76) & (data['PUNT_MATEMATICAS'] <= 90), 'IDDESMATH'] = '6'
-    data.loc[(data['PUNT_MATEMATICAS'] >= 91) & (data['PUNT_MATEMATICAS'] <= 100), 'IDDESMATH'] = '7'
+    data.loc[(data['PUNT_MATEMATICAS'] >= 0) & (data['PUNT_MATEMATICAS'] <= 16), 'IDDESMATH'] = '1'
+    data.loc[(data['PUNT_MATEMATICAS'] >= 17) & (data['PUNT_MATEMATICAS'] <= 33), 'IDDESMATH'] = '2'
+    data.loc[(data['PUNT_MATEMATICAS'] >= 34) & (data['PUNT_MATEMATICAS'] <= 50), 'IDDESMATH'] = '3'
+    data.loc[(data['PUNT_MATEMATICAS'] >= 51) & (data['PUNT_MATEMATICAS'] <= 67), 'IDDESMATH'] = '4'
+    data.loc[(data['PUNT_MATEMATICAS'] >= 68) & (data['PUNT_MATEMATICAS'] <= 84), 'IDDESMATH'] = '5'
+    data.loc[(data['PUNT_MATEMATICAS'] >= 85) & (data['PUNT_MATEMATICAS'] <= 99), 'IDDESMATH'] = '6'
+    data.loc[data['PUNT_MATEMATICAS'] == 100, 'IDDESMATH'] = '7'
     data.to_csv('./DMs/TH_SB11_2012_1.csv', index = False)
     creatableQuery = f"""CREATE TABLE IF NOT EXISTS DM_DESMATH (
                     IDDESMATH INTEGER PRIMARY KEY,
@@ -480,21 +479,20 @@ def dmDeMath():
 def dmDePuesto():
     data = pd.read_csv('./DMs/TH_SB11_2012_1.csv', low_memory=False)
     DM_PUESTO = {'IDPUESTO': ["1", "2", "3", "4", "5", "6", "7"],
-                    'NOMBRE': ['A-', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2',],
-                    'RANGO': ["0 ~ 150", "151 ~ 300", "301 ~ 450", "451 ~ 600", "601 ~ 750", "751 ~ 900", "901 ~ 1000"]
+                    'NOMBRE': ['A-', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'],
+                    'RANGO': ["0 ~ 165", "166 ~ 332", "333 ~ 498", "499 ~ 665", "666 ~ 832", "833 ~ 999", "1000"]
                 }
     rangos = pd.DataFrame(DM_PUESTO)
     rangos.to_csv('./DMs/DM_PUESTO.csv', index = False)
     newFile = 'DM_PUESTO'
- 
     data['IDPUESTO'] = 0
-    data.loc[(data['ESTU_PUESTO'] >= 0) & (data['ESTU_PUESTO'] <= 150), 'IDPUESTO'] = '1'
-    data.loc[(data['ESTU_PUESTO'] >= 151) & (data['ESTU_PUESTO'] <= 300), 'IDPUESTO'] = '2'
-    data.loc[(data['ESTU_PUESTO'] >= 301) & (data['ESTU_PUESTO'] <= 450), 'IDPUESTO'] = '3'
-    data.loc[(data['ESTU_PUESTO'] >= 451) & (data['ESTU_PUESTO'] <= 600), 'IDPUESTO'] = '4'
-    data.loc[(data['ESTU_PUESTO'] >= 601) & (data['ESTU_PUESTO'] <= 750), 'IDPUESTO'] = '5'
-    data.loc[(data['ESTU_PUESTO'] >= 751) & (data['ESTU_PUESTO'] <= 900), 'IDPUESTO'] = '6'
-    data.loc[(data['ESTU_PUESTO'] >= 901) & (data['ESTU_PUESTO'] <= 1000), 'IDPUESTO'] = '7'
+    data.loc[(data['ESTU_PUESTO'] >= 0) & (data['ESTU_PUESTO'] <= 165), 'IDPUESTO'] = '1'
+    data.loc[(data['ESTU_PUESTO'] >= 166) & (data['ESTU_PUESTO'] <= 300), 'IDPUESTO'] = '2'
+    data.loc[(data['ESTU_PUESTO'] >= 333) & (data['ESTU_PUESTO'] <= 450), 'IDPUESTO'] = '3'
+    data.loc[(data['ESTU_PUESTO'] >= 499) & (data['ESTU_PUESTO'] <= 600), 'IDPUESTO'] = '4'
+    data.loc[(data['ESTU_PUESTO'] >= 666) & (data['ESTU_PUESTO'] <= 750), 'IDPUESTO'] = '5'
+    data.loc[(data['ESTU_PUESTO'] >= 833) & (data['ESTU_PUESTO'] <= 900), 'IDPUESTO'] = '6'
+    data.loc[data['ESTU_PUESTO'] == 1000, 'IDPUESTO'] = '7'
     data.to_csv('./DMs/TH_SB11_2012_1.csv', index = False)
     creatableQuery = f"""CREATE TABLE IF NOT EXISTS DM_PUESTO (
                     IDPUESTO INTEGER PRIMARY KEY,

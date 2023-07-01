@@ -4,4 +4,6 @@ __pycache__
 
 codium/venv/
 codium/__pycache__
+codium/.ipynb_checkpoints
+codium/.ipynb_checkpoints/*
 
